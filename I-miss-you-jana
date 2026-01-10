@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>I Miss You 💙</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Great+Vibes&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Pacifico',cursive;}
+body{overflow-x:hidden;text-align:center;background:linear-gradient(135deg,#ff9a9e,#fad0c4);color:#fff;position:relative;}
+.disco{
+ position:fixed;inset:0;z-index:-5;
+ background:
+  radial-gradient(circle at 20% 30%, rgba(255,0,150,.4), transparent 40%),
+  radial-gradient(circle at 80% 20%, rgba(0,255,255,.4), transparent 40%),
+  radial-gradient(circle at 50% 80%, rgba(255,255,0,.4), transparent 40%);
+ animation:disco 8s infinite alternate;
+}
+@keyframes disco{100%{filter:hue-rotate(360deg)}}
+
+button{
+ padding:14px 36px;border:none;border-radius:40px;
+ background:white;color:#c9184a;
+ font-size:1.3rem;margin:15px;cursor:pointer;
+ transition:.3s;
+}
+button:hover{transform:scale(1.1)}
+
+#lock{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;justify-content:center;align-items:center;z-index:999}
+#lockBox{background:rgba(255,255,255,.85);padding:40px;border-radius:30px;color:#c9184a;}
+#lock input{padding:14px;border:none;border-radius:25px;font-size:1.2rem;text-align:center}
+#passHint{font-weight:bold;font-size:1.3rem;margin-bottom:15px;}
+
+.page{display:none; padding:30px;}
+#game, #quizPage, #letterPage, #memoryGame, #finalPage{height:100vh;}
+
+#heart-area span{
+ position:absolute;
+ font-size:32px;
+ cursor:pointer;
+ animation:fall 4s linear infinite;
+ filter:drop-shadow(0 0 15px #ff2e63);
+}
+@keyframes fall{
+ from{top:-60px;transform:rotate(0deg)}
+ to{top:110vh;transform:rotate(360deg)}
+}
+#score{font-size:3.5rem;animation:pulse .5s;}
+@keyframes pulse{50%{transform:scale(1.3)}}
+
+#quizQuestion{font-size:1.8rem;margin-top:50px;}
+#quizMessage{margin-top:20px;color:#ff2e63;font-size:1.4rem;}
+
+.letter{
+ background:rgba(30,58,138,.95);
+ width:90%;max-width:800px;
+ margin:50px auto;padding:60px;
+ border-radius:25px;font-size:2rem;line-height:2.2rem;
+}
+
+#memoryBoard{display:flex;flex-wrap:wrap;width:360px;margin:30px auto;justify-content:center}
+#memoryBoard div{width:70px;height:70px;margin:5px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:2rem;cursor:pointer;border-radius:10px;}
+
+#finalCanvas{display:block;margin:auto;background:#0a0a23;border-radius:20px;box-shadow:0 0 40px #ff2e63;}
+#finalText{
+ font-size:3rem; font-family:'Great Vibes',cursive; color:#ff2e63;
+ text-align:center; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%);
+}
+</style>
+</head>
+<body>
+<audio id="bgMusic" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" autoplay loop></audio>
+
+<div class="disco"></div>
+
+<div id="lock" class="page" style="display:flex">
+ <div id="lockBox">
+  <h2>💖 I Miss You 💖</h2>
+  <div id="passHint">Password Hint: Only true love knows 💙</div>
+  <input type="password" id="pass" placeholder="Password">
+  <br><br>
+  <button onclick="unlock()">Unlock 💖</button>
+  <p id="err" style="color:red"></p>
+ </div>
+</div>
+
+<div id="game" class="page">
+ <h1>❤️ Catch 10 Hearts ❤️</h1>
+ <h2><span id="score">0</span> / 10</h2>
+ <div id="heart-area"></div>
+</div>
+
+<div id="quizPage" class="page">
+ <h1>Mini Love Quiz 💕</h1>
+ <div id="quizQuestion"></div>
+ <input id="quizAnswer" placeholder="Answer">
+ <p id="quizMessage"></p>
+ <button id="quizNext" onclick="nextQuiz()">Next</button>
+</div>
+
+<div id="letterPage" class="page">
+ <div class="letter" id="letterText"></div>
+ <button onclick="showMemory()">Next 💙</button>
+</div>
+
+<div id="memoryGame" class="page" style="position:relative;">
+ <h1>Memory Love Game 💖</h1>
+ <div id="memoryBoard"></div>
+ <p id="memoryMessage"></p>
+ <button onclick="showFinalPage()">Next ❤️</button>
+ <canvas id="confettiCanvas" width="600" height="600" style="position:absolute;top:0;left:50%;transform:translateX(-50%);pointer-events:none;"></canvas>
+</div>
+
+<!-- FINAL PAGE WITH HEART SHAPE AND NAMES -->
+<div id="finalPage" class="page">
+  <h1>Forever Connected ❤️</h1>
+  <canvas id="finalCanvas" width="700" height="700"></canvas>
+  <div id="finalText">Talha ❤️ Harmain</div>
+</div>
+
+<script>
+// -------------------- LOCK --------------------
+const pass = document.getElementById("pass");
+const err = document.getElementById("err");
+const lock = document.getElementById("lock");
+const game = document.getElementById("game");
+function unlock(){if(pass.value.toLowerCase()=="talha"){lock.style.display="none";game.style.display="block";startGame();} else err.innerText="Dil se socho 💔";}
+
+// -------------------- HEART GAME --------------------
+let score=0;
+const scoreEl=document.getElementById("score");
+function startGame(){
+ let interval=setInterval(()=>{
+  if(score>=10){clearInterval(interval);return;}
+  let h=document.createElement("span");
+  h.innerHTML="❤️";
+  h.style.left=Math.random()*90+"vw";
+  h.style.fontSize=(26+Math.random()*18)+"px";
+  h.onclick=()=>{score++; scoreEl.innerText=score; h.remove(); if(score>=10){setTimeout(()=>{game.style.display="none";startQuiz();},700);}};
+  document.getElementById("heart-area").appendChild(h);
+ },120);
+}
+
+// -------------------- QUIZ --------------------
+const quizData=[
+ {q:"What does Talha lovingly call you?",a:"my jaan"},
+ {q:"What are you to Talha?",a:"everything"},
+ {q:"Who is Talha’s favorite person?",a:"harmain"},
+ {q:"What is Talha’s favorite color?",a:"black"},
+ {q:"What is Talha’s favorite food?",a:"biryani"}
+];
+let quizIndex=0;
+function startQuiz(){quizPage.style.display="block"; showQuizQuestion();}
+function showQuizQuestion(){if(quizIndex>=quizData.length){quizPage.style.display="none"; showLetterPage(); return;} quizQuestion.innerHTML=`<p>${quizData[quizIndex].q}</p>`; quizAnswer.value=""; quizMessage.innerText="";}
+function nextQuiz(){let ans = quizAnswer.value.toLowerCase().replace(/\s+/g,""); let correct = quizData[quizIndex].a.toLowerCase().replace(/\s+/g,""); if(ans.includes(correct)){quizIndex++; showQuizQuestion();} else quizMessage.innerText="Hmm… think with love 💕";}
+
+// -------------------- LETTER --------------------
+function showLetterPage(){letterPage.style.display="block"; const txt=`My Love 💙\n\nEvery heartbeat whispers your name.\nDistance means nothing\nwhen love is everything.\n\nI miss you endlessly ❤️`; let i=0; letterText.innerHTML=""; let t=setInterval(()=>{letterText.innerHTML+=txt[i++]; if(i>=txt.length) clearInterval(t);},40);}
+
+// -------------------- MEMORY --------------------
+function showMemory(){letterPage.style.display="none"; memoryGame.style.display="block"; memoryBoard.innerHTML=""; const arr=["💙","❤️","💖","💍","💙","❤️","💖","💍"]; arr.sort(()=>Math.random()-0.5); arr.forEach(s=>{let d=document.createElement("div"); d.className="card"; d.innerText="❓"; d.onclick=()=>d.innerText=s; memoryBoard.appendChild(d);});}
+
+// -------------------- CONFETTI --------------------
+function startConfetti(){const canvas = document.getElementById("confettiCanvas"); const ctx = canvas.getContext("2d"); let confetti = []; for(let i=0;i<150;i++){confetti.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height-600,dx:Math.random()*2-1,dy:Math.random()*3+2,color:["#ff2e63","#ff9a9e","#c9184a","#fad0c4"][Math.floor(Math.random()*4)],size:Math.random()*6+4});} function animateConfetti(){ctx.clearRect(0,0,canvas.width,canvas.height); confetti.forEach(c=>{c.x+=c.dx; c.y+=c.dy; if(c.y>canvas.height)c.y=-10; ctx.fillStyle=c.color; ctx.beginPath(); ctx.arc(c.x,c.y,c.size,0,Math.PI*2); ctx.fill();}); requestAnimationFrame(animateConfetti);} animateConfetti();}
+
+// -------------------- FINAL PAGE HEART SHAPE --------------------
+function showFinalPage(){
+ memoryGame.style.display="none";
+ finalPage.style.display="block";
+ startConfetti();
+
+ const canvas = finalCanvas;
+ const ctx = canvas.getContext("2d");
+ const width = canvas.width;
+ const height = canvas.height;
+
+ // Heart points for animation
+ const hearts = [];
+ const totalPoints = 300;
+
+ function getHeartPoint(t) {
+   const x = width/2 + 16*Math.pow(Math.sin(t),3)*20;
+   const y = height/2 - (13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))*20;
+   return {x, y};
+ }
+
+ for (let i=0;i<totalPoints;i++){
+   const t = Math.PI*2*(i/totalPoints);
+   const target = getHeartPoint(t);
+   hearts.push({
+     x: Math.random()*width,
+     y: -Math.random()*height,
+     targetX: target.x,
+     targetY: target.y,
+     dx: (target.x - Math.random()*width)/100,
+     dy: (target.y + Math.random()*50)/100 + 1
+   });
+ }
+
+ function animate(){
+   ctx.clearRect(0,0,width,height);
+   hearts.forEach(h=>{
+     h.x += h.dx;
+     h.y += h.dy;
+     if(h.y > height){h.y = -10; h.x = Math.random()*width;}
+     ctx.fillStyle = "#ff2e63";
+     ctx.beginPath(); ctx.arc(h.x,h.y,7,0,Math.PI*2); ctx.fill();
+   });
+   requestAnimationFrame(animate);
+ }
+ animate();
+}
+</script>
+</body>
+</html>
