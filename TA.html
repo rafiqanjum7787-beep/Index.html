@@ -18,7 +18,7 @@
 
     #lock{ position:fixed; inset:0; background:rgba(0,0,0,.8); display:flex; z-index:999; justify-content:center; align-items:center;}
     #lockBox{ background:rgba(255,255,255,0.1); backdrop-filter:blur(10px); padding:40px; border-radius:25px; border:1px solid rgba(255,255,255,0.2);}
-    input{ padding:12px; border-radius:12px; border:none; text-align:center; font-size:1rem; margin-bottom:10px;}
+    input{ padding:12px; border-radius:12px; border:none; text-align:center; font-size:1rem; margin-bottom:10px; color: #333;}
 
     #heart-area span{ position:absolute; font-size:30px; cursor:pointer; animation:fall 4s linear forwards;}
     @keyframes fall{ to{ transform:translateY(110vh); } }
@@ -90,7 +90,11 @@
             h.innerHTML = "💙";
             h.style.left = Math.random() * 90 + "vw";
             h.style.top = "-50px";
-            h.onclick = () => { score++; document.getElementById("score").innerText = score; h.remove(); };
+            h.onclick = () => { 
+                score++; 
+                document.getElementById("score").innerText = score; 
+                h.remove(); 
+            };
             document.getElementById("heart-area").appendChild(h);
         }, 800);
     }
@@ -98,9 +102,8 @@
     const quizQuestions = [
         {q: "Who is Talha's favorite person?", a: "ayat"},
         {q: "Do you miss Talha?", a: "yes"},
-       {q: "Talha'sfavourite colour?", a: "black"}
-    ];
-    
+        {q: "Talha's favourite colour?", a: "black"}
+    ]; // اضافی بریکٹ یہاں سے ہٹا دی گئی ہے
 
     function startQuiz() {
         document.getElementById("quizPage").style.display = "flex";
@@ -110,20 +113,24 @@
     function showQuestion() {
         let q = quizQuestions[quizIndex];
         let container = document.getElementById("quizContainer");
-        container.innerHTML = `<h3>${q.q}</h3><br><input id='ans' type='text'><br><button onclick='checkAns()'>Next</button>`;
+        container.innerHTML = `<h3>${q.q}</h3><br><input id='ans' type='text' style='color:#333'><br><button onclick='checkAns()'>Next</button>`;
     }
 
     function checkAns() {
         quizIndex++;
-        if(quizIndex < quizQuestions.length) showQuestion();
-        else showLetter();
+        if(quizIndex < quizQuestions.length) {
+            showQuestion();
+        } else {
+            showLetter();
+        }
     }
 
     function showLetter() {
         document.getElementById("quizPage").style.display = "none";
         document.getElementById("letterPage").style.display = "flex";
-        let text = "Dear Bestie, Ayat... Just wanted to say that you are the best! Distance doesn't matter when the friendship is real.Side by side or miles apart. Real friends are always close to the heart. love that I don't have to act socially acceptable around you! 💙";
+        let text = "Dear Bestie, Ayat... Just wanted to say that you are the best! Distance doesn't matter when the friendship is real. Side by side or miles apart, real friends are always close to the heart. I love that I don't have to act socially acceptable around you! 💙";
         let i = 0;
+        document.getElementById("letterText").innerHTML = ""; // Clear existing text
         function typing() {
             if(i < text.length) {
                 document.getElementById("letterText").innerHTML += text.charAt(i);
