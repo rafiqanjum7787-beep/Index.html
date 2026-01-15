@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>I Miss You Bestie 💙</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Great+Vibes&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Pacifico',cursive;}
+body{
+ text-align:center;
+ background:linear-gradient(135deg,#6a11cb,#2575fc);
+ color:#fff;
+ overflow-x:hidden;
+}
+
+.disco{
+ position:fixed;inset:0;z-index:-1;
+ background:
+  radial-gradient(circle at 20% 30%, rgba(255,255,255,.2), transparent 40%),
+  radial-gradient(circle at 80% 20%, rgba(255,182,193,.3), transparent 40%),
+  radial-gradient(circle at 50% 80%, rgba(173,216,230,.3), transparent 40%);
+ animation:disco 10s infinite alternate;
+}
+@keyframes disco{100%{filter:hue-rotate(360deg)}}
+
+.page{
+ display:none;
+ min-height:100vh;
+ padding:30px;
+ flex-direction:column;
+ justify-content:center;
+ align-items:center;
+}
+
+button{
+ padding:14px 36px;
+ border:none;
+ border-radius:40px;
+ background:#fff;
+ color:#2575fc;
+ font-size:1.2rem;
+ margin:15px;
+ cursor:pointer;
+ transition:.3s;
+}
+button:hover{transform:scale(1.1)}
+
+#lock{
+ position:fixed;inset:0;
+ background:rgba(0,0,0,.75);
+ display:flex;z-index:999;
+}
+#lockBox{
+ background:#fff;
+ color:#2575fc;
+ padding:40px;
+ border-radius:25px;
+ max-width:320px;
+}
+
+#heart-area span{
+ position:absolute;
+ font-size:30px;
+ animation:fall 4s linear infinite;
+ cursor:pointer;
+}
+@keyframes fall{from{top:-60px}to{top:110vh}}
+
+.letter{
+ background:rgba(255,255,255,.15);
+ backdrop-filter:blur(8px);
+ border-radius:25px;
+ padding:35px;
+ max-width:800px;
+ font-size:1.6rem;
+ line-height:1.6;
+}
+
+#finalText{
+ font-family:'Great Vibes',cursive;
+ font-size:3rem;
+ color:#ffdde1;
+ position:absolute;
+ top:60%;left:50%;
+ transform:translate(-50%,-50%);
+ text-shadow:2px 2px 12px rgba(0,0,0,.6);
+}
+canvas{
+ background:#0a0a23;
+ border-radius:20px;
+ max-width:100%;
+}
+</style>
+</head>
+
+<body>
+<div class="disco"></div>
+
+<!-- LOCK -->
+<div id="lock" class="page" style="display:flex">
+ <div id="lockBox">
+  <h2>💙 For My Bestie 💙</h2>
+  <p>Password Hint: My Name 😊</p>
+  <input id="pass" type="password" style="padding:10px;border-radius:10px;border:1px solid #ccc">
+  <br><br>
+  <button onclick="unlock()">Open 💌</button>
+  <p id="err" style="color:red"></p>
+ </div>
+</div>
+
+<!-- HEART GAME -->
+<div id="game" class="page">
+ <h1>💙 Catch 10 Memories 💙</h1>
+ <h2><span id="score">0</span> / 10</h2>
+ <div id="heart-area"></div>
+</div>
+
+<!-- LETTER -->
+<div id="letterPage" class="page">
+ <div class="letter">
+  Hey Ayat 💙<br><br>
+
+  I just want you to know one simple thing…<br>
+  <b>I really miss you.</b><br><br>
+
+  Life feels a little incomplete without our talks,
+  our jokes, and those random moments that only
+  best friends understand ✨<br><br>
+
+  No matter where life takes us,
+  you’ll always have a special place in my heart
+  as my best friend 💫<br><br>
+
+  Take care and smile for me,<br>
+  <b>— Talha 🤍</b>
+ </div>
+ <button onclick="showFinal()">Next 💙</button>
+</div>
+
+<!-- FINAL -->
+<div id="finalPage" class="page">
+ <h1>Best Friends Forever 💙</h1>
+ <div style="position:relative">
+  <canvas id="finalCanvas" width="500" height="500"></canvas>
+  <div id="finalText">Talha 🤍 Ayat</div>
+ </div>
+</div>
+
+<script>
+function unlock(){
+ if(pass.value.toLowerCase()=="talha"){
+  lock.style.display="none";
+  game.style.display="flex";
+  startGame();
+ }else err.innerText="Socho zara 😊";
+}
+
+let score=0;
+function startGame(){
+ let i=setInterval(()=>{
+  if(score>=10){
+   clearInterval(i);
+   game.style.display="none";
+   letterPage.style.display="flex";
+   return;
+  }
+  let h=document.createElement("span");
+  h.innerHTML="💙";
+  h.style.left=Math.random()*90+"vw";
+  h.onclick=()=>{score++;scoreEl.innerText=score;h.remove();}
+  heartArea.appendChild(h);
+ },600);
+}
+const scoreEl=document.getElementById("score");
+const heartArea=document.getElementById("heart-area");
+
+function showFinal(){
+ letterPage.style.display="none";
+ finalPage.style.display="flex";
+ draw();
+}
+
+function draw(){
+ const c=finalCanvas,ctx=c.getContext("2d"),p=[];
+ class P{
+  constructor(){
+   this.x=c.width/2;this.y=c.height/2;
+   this.s=Math.random()*5+2;
+   this.vx=Math.random()*3-1.5;
+   this.vy=Math.random()*3-1.5;
+   this.col=`hsl(${Math.random()*360},70%,60%)`;
+  }
+  u(){this.x+=this.vx;this.y+=this.vy;if(this.s>0.1)this.s-=.05;}
+  d(){ctx.fillStyle=this.col;ctx.beginPath();ctx.arc(this.x,this.y,this.s,0,Math.PI*2);ctx.fill();}
+ }
+ (function a(){
+  ctx.fillStyle="rgba(10,10,35,.1)";
+  ctx.fillRect(0,0,c.width,c.height);
+  p.push(new P());
+  p.forEach((x,i)=>{x.u();x.d();if(x.s<=.3)p.splice(i,1);});
+  requestAnimationFrame(a);
+ })();
+}
+</script>
+</body>
+</html>
