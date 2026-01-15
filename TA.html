@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>I Miss You Bestie 💙</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<style>
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'Pacifico',cursive;}
+    body{ background:linear-gradient(135deg,#6a11cb,#2575fc); color:#fff; text-align:center; overflow:hidden;}
+    
+    .disco{ position:fixed;inset:0;z-index:-2; background: radial-gradient(circle at 20% 30%, rgba(255,0,150,.35), transparent 40%), radial-gradient(circle at 80% 20%, rgba(0,255,255,.35), transparent 40%); animation:disco 6s infinite alternate;}
+    @keyframes disco{100%{filter:hue-rotate(360deg)}}
+
+    .page{ display:none; min-height:100vh; padding:20px; flex-direction:column; justify-content:center; align-items:center;}
+    button{ padding:12px 30px; border:none; border-radius:40px; background:#fff; color:#2575fc; font-size:1.1rem; margin:10px; cursor:pointer; transition:.3s;}
+    button:hover{transform:scale(1.1)}
+
+    #lock{ position:fixed; inset:0; background:rgba(0,0,0,.8); display:flex; z-index:999; justify-content:center; align-items:center;}
+    #lockBox{ background:rgba(255,255,255,0.1); backdrop-filter:blur(10px); padding:40px; border-radius:25px; border:1px solid rgba(255,255,255,0.2);}
+    input{ padding:12px; border-radius:12px; border:none; text-align:center; font-size:1rem; margin-bottom:10px;}
+
+    #heart-area span{ position:absolute; font-size:30px; cursor:pointer; animation:fall 4s linear forwards;}
+    @keyframes fall{ to{ transform:translateY(110vh); } }
+
+    .letter{ background:rgba(255,255,255,.15); backdrop-filter:blur(10px); border-radius:20px; padding:30px; max-width:600px; font-size:1.4rem; line-height:1.6;}
+</style>
+</head>
+
+<body>
+<div class="disco"></div>
+
+<div id="lock" class="page" style="display:flex">
+    <div id="lockBox">
+        <h2>💙 For My Bestie 💙</h2>
+        <p>Password Hint: <b>Talha's bestie</b></p><br>
+        <input id="passInput" type="password" placeholder="Type password 💌"><br>
+        <button onclick="unlock()">Open</button>
+        <p id="err" style="color:#ffcccb;"></p>
+    </div>
+</div>
+
+<div id="game" class="page">
+    <h1>Catch 10 Hearts 💙</h1>
+    <h2>Score: <span id="score">0</span> / 10</h2>
+    <div id="heart-area"></div>
+</div>
+
+<div id="quizPage" class="page">
+    <h1>💡 Quiz Time 💡</h1>
+    <div id="quizContainer" style="background:rgba(255,255,255,0.1); padding:30px; border-radius:20px;"></div>
+</div>
+
+<div id="letterPage" class="page">
+    <div class="letter">
+        <p id="letterText"></p>
+    </div>
+    <button onclick="showFinal()">Finish 💙</button>
+</div>
+
+<div id="finalPage" class="page">
+    <h1>We are Best Friends Forever! 💙</h1>
+    <p style="font-size: 50px;">♾️</p>
+</div>
+
+<script>
+    let score = 0;
+    let quizIndex = 0;
+
+    function unlock() {
+        let pass = document.getElementById("passInput").value.toLowerCase();
+        if(pass === "ayat") {
+            document.getElementById("lock").style.display = "none";
+            document.getElementById("game").style.display = "flex";
+            startGame();
+        } else {
+            document.getElementById("err").innerText = "Hint: It's your name! 😊";
+        }
+    }
+
+    function startGame() {
+        let interval = setInterval(() => {
+            if(score >= 10) {
+                clearInterval(interval);
+                document.getElementById("game").style.display = "none";
+                startQuiz();
+                return;
+            }
+            let h = document.createElement("span");
+            h.innerHTML = "💙";
+            h.style.left = Math.random() * 90 + "vw";
+            h.style.top = "-50px";
+            h.onclick = () => { score++; document.getElementById("score").innerText = score; h.remove(); };
+            document.getElementById("heart-area").appendChild(h);
+        }, 800);
+    }
+
+    const quizQuestions = [
+        {q: "Who is Talha's favorite person?", a: "ayat"},
+        {q: "Do you miss Talha?", a: "yes"}
+    ];
+
+    function startQuiz() {
+        document.getElementById("quizPage").style.display = "flex";
+        showQuestion();
+    }
+
+    function showQuestion() {
+        let q = quizQuestions[quizIndex];
+        let container = document.getElementById("quizContainer");
+        container.innerHTML = `<h3>${q.q}</h3><br><input id='ans' type='text'><br><button onclick='checkAns()'>Next</button>`;
+    }
+
+    function checkAns() {
+        quizIndex++;
+        if(quizIndex < quizQuestions.length) showQuestion();
+        else showLetter();
+    }
+
+    function showLetter() {
+        document.getElementById("quizPage").style.display = "none";
+        document.getElementById("letterPage").style.display = "flex";
+        let text = "Dear Bestie, Ayat... Just wanted to say that you are the best! Distance doesn't matter when the friendship is real. I miss our talks! 💙";
+        let i = 0;
+        function typing() {
+            if(i < text.length) {
+                document.getElementById("letterText").innerHTML += text.charAt(i);
+                i++;
+                setTimeout(typing, 50);
+            }
+        }
+        typing();
+    }
+
+    function showFinal() {
+        document.getElementById("letterPage").style.display = "none";
+        document.getElementById("finalPage").style.display = "flex";
+    }
+</script>
+</body>
+</html>
